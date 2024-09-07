@@ -5,9 +5,12 @@ import requests
 import uvicorn
 import os
 from dotenv import load_dotenv
+from geopy.distance import geodesic
 load_dotenv()
 
 app = FastAPI()
+with open('yellow_line.json', 'r', encoding='utf-8') as f:
+    yellow_line_data = json.load(f)
 origins = [
     "http://localhost",
     "http://localhost:5173",
@@ -71,6 +74,19 @@ def read_root(lon: float, lat: float):
 def strToCord(string):
     string = string.split(" ")
     return (float(string[0]),float(string[1]))
+
+
+@app.get("/get_line")
+def get_line(lon:float, lat:float):
+    target_coord = (lat,lon)
+    nearby_coordinates = []
+    for item in yellow_line_data:
+        for coord in item['coordinates']:
+            lon, lat = coord
+            distance = geodesic(target_coord, (lat, lon)).kilometers
+            if distance < 1:
+                nearby_coordinates.append(item)
+    return nearby_coordinates
 
 
 if __name__ == "__main__":
