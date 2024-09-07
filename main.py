@@ -81,11 +81,12 @@ def get_line(lon:float, lat:float):
     target_coord = (lat,lon)
     nearby_coordinates = []
     for item in yellow_line_data:
-        for coord in yellow_line_data['item']['coordinates']:
+        for coord in yellow_line_data[item]['coordinates']:
             lon, lat = coord
             distance = geodesic(target_coord, (lat, lon)).kilometers
             if distance < 1:
-                nearby_coordinates.append(yellow_line_data['item'])
+                nearby_coordinates.append(yellow_line_data[item])
+
     return nearby_coordinates
 
 
