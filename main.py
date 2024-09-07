@@ -15,7 +15,7 @@ origins = [
     "http://localhost",
     "http://localhost:5173",
     "https://localhost:5173",
-    "https://vaclis-taipei-town.web.app/",
+    "https://vaclis-taipei-town.web.app",
 ]
 app.add_middleware(
     CORSMiddleware,
