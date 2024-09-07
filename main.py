@@ -28,23 +28,44 @@ def read_root(lon: float, lat: float):
         headers=headers,
     )
     data = response.json()
-    out = []
+    parkingLot = []
+    parkingGrid = []
     for i in data:
-        out.append(
-            {
-                "parkId": i["parkId"],
-                "parkName": i["parkName"],
-                "lon": i["lon"],
-                "lat": i["lat"],
-                "carTotalNum": i["carTotalNum"],
-                "carRemainderNum": i["carRemainderNum"],
-                "payex": i["payex"],
-                "chargeStationTotalNum": i["chargeStationTotalNum"],
-                # "entrance": json.loads(i["entrance"]) if i["entrance"] is not None else None,
-                "wkt": i["wkt"],
-            }
-        )
-    return out
+        if i["wkt"] is None:
+            parkingLot.append(
+                {
+                    "parkId": i["parkId"],
+                    "parkName": i["parkName"],
+                    "lon": i["lon"],
+                    "lat": i["lat"],
+                    "carTotalNum": i["carTotalNum"],
+                    "carRemainderNum": i["carRemainderNum"],
+                    "payex": i["payex"],
+                    "chargeStationTotalNum": i["chargeStationTotalNum"],
+                    # "entrance": json.loads(i["entrance"]) if i["entrance"] is not None else None,
+                }
+            )
+        else:
+            if i["remark"] != "目前空格" and i["remark"] != "目前有車停放":
+                print(i["remark"])
+            parkingGrid.append(
+                {
+                    "parkId": i["parkId"],
+                    "parkName": i["parkName"],
+                    "lon": i["lon"],
+                    "lat": i["lat"],
+                    "available": i["remark"] == "目前空格",
+                    "payex": i["payex"],
+                    "chargeStationTotalNum": i["chargeStationTotalNum"],
+                    # "entrance": json.loads(i["entrance"]) if i["entrance"] is not None else None,
+                    "wkt": list(map(strToCord, i["wkt"][10:-2].split(", "))),
+                }
+            )
+    return {"parkingLot": parkingLot, "parkingGrid": parkingGrid}
+
+def strToCord(string):
+    string = string.split(" ")
+    return (float(string[0]),float(string[1]))
 
 
 if __name__ == "__main__":
