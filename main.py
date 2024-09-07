@@ -3,7 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import json
 import requests
 import uvicorn
-import ssl
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI()
 origins = [
@@ -70,4 +72,7 @@ def strToCord(string):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=25569, ssl_keyfile='./key.pem', ssl_certfile='./cert.pem')
+    ssl_keyfile=os.getenv("SSL_KEYFILE")
+    ssl_certfile=os.getenv("SSL_CERTFILE")
+    ssl_password=os.getenv("SSL_PASSWORD")
+    uvicorn.run(app, host="0.0.0.0", port=25569, ssl_keyfile=ssl_keyfile, ssl_certfile=ssl_certfile, ssl_keyfile_password=ssl_password)
